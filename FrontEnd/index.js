@@ -20,8 +20,9 @@ try {
                 newImg.src = element.imageUrl
                 newFigcaption.innerHTML = element.title
 
-                newFigure.appendChild(newImg);
-                newFigure.appendChild(newFigcaption);
+                newFigure.setAttribute("categoryId", element.categoryId)
+                newFigure.appendChild(newImg)
+                newFigure.appendChild(newFigcaption)
                 
                 gallery.appendChild(newFigure)
             });
@@ -61,28 +62,40 @@ try {
 
             portfolio.insertBefore(filterCategoriesWrapper, gallery)
 
-            const categories = new Set();
-            categories.add('Tous')
+            const categories = new Set()
+            categories.add({"id": 0, "name": 'Tous'})
 
             data.forEach(element => {
-                console.log(element)
-                categories.add(element.name)
+                categories.add(element)
             });
+
+            console.log(categories)
 
             categories.forEach(element => {
                 const category = document.createElement('div')
+                category.setAttribute('categoryId', element.id)
                 category.classList.add("category")
                 category.style.display = "flex"
                 category.style.justifyContent = "center"
                 category.style.alignItems = "center"
                 category.style.borderRadius = "60px"
                 category.style.border = "1px solid #1D6154"
-                category.innerHTML = element
-                console.log(element)
+                category.innerHTML = element.name
                 filterCategoriesWrapper.appendChild(category)
-            })
 
-            
+                category.addEventListener('click', function(category) {
+                    const galleryChildren = gallery.children
+                    for(let i = 0; i < galleryChildren.length; i++) {
+                        if(category.target.getAttribute('categoryId') == galleryChildren[i].getAttribute('categoryId') || category.target.getAttribute('categoryId') == 0) {
+                            galleryChildren[i].style.display = "block"
+                       }
+
+                       else {
+                            galleryChildren[i].style.display = "none"
+                       }
+                    }
+                })
+            })    
         }
 
         else {
@@ -94,6 +107,7 @@ try {
 catch(e) {
     console.log('Fetch error : ' + e.message);
 }
+
 
 
 
