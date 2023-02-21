@@ -69,8 +69,6 @@ try {
                 categories.add(element)
             });
 
-            console.log(categories)
-
             categories.forEach(element => {
                 const category = document.createElement('div')
                 category.setAttribute('categoryId', element.id)
@@ -108,9 +106,48 @@ catch(e) {
     console.log('Fetch error : ' + e.message);
 }
 
+// ---------------- WHEN LOGGED ------------------ //
 
+const getToken = localStorage.getItem('token')
+const loginButton = document.querySelector('#login')
+const loginLink = document.createElement('a')
+const modifyWrapper = document.querySelectorAll('.modify-wrapper')
+const editModeWrpaper = document.querySelector('.edit-mode-wrpaper')
+const navWrapper = document.querySelector('.nav-wrapper')
 
+try {
+    if(getToken !== null) {
+        loginLink.innerHTML = "Logout"
+        loginLink.href = "./index.html"
+        loginButton.appendChild(loginLink)
 
+        loginLink.addEventListener('click', function() {
+            localStorage.removeItem('token')
+        })
 
+        for(let i = 0; i < modifyWrapper.length; i++) {
+            modifyWrapper[i].style.display = 'flex'
+       }
 
+       editModeWrpaper.style.display = 'flex'
+       navWrapper.style.marginTop = '90px'
+    }
 
+    else {
+        loginLink.innerHTML = "Login"
+        loginLink.href = "./login.html"
+
+        loginButton.appendChild(loginLink)
+
+        for(let i=0; i < modifyWrapper.length; i++) {
+            modifyWrapper[i].style.display = 'none'
+        }
+
+       
+        
+    }
+}
+
+catch(e) {
+    console.log("Error :" + e.message)
+}

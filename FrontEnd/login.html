@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<meta charset="UTF-8">
+	<title>Sophie Bluel - Architecte d'intérieur</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Work+Sans&display=swap" rel="stylesheet">
+	<meta name="description" content="">
+	<link rel="stylesheet" href="./assets/style.css">
+    <link rel="stylesheet" href="./assets/login.css">
+	<script type="text/javascript" src="./login.js" async></script>
+</head>
+<body>
+<header>
+	<div class="nav-wrapper">
+		<h1>Sophie Bluel <span>Architecte d'inteérieur</span></h1>
+		<nav>
+			<ul>
+				<li><a href="./index.html">projets</a></li>
+				<li><a href="#">contact</a></li>
+				<li><a href="./login.html">login</a></li>
+				<li><img src="./assets/icons/instagram.png" alt="Instagram"></li>
+			</ul>
+		</nav>
+	</div>
+</header>
+<main>
+    <section id="login">
+        <div class="login-wrapper">
+            <h2>Log In</h2>
+            <form method="post" class="form-wrapper" onsubmit="login(event)">
+                <div class="login-inputs-wrapper">
+                    <div class="login-input-wrapper">
+                        <label for="email">Email</label>
+                        <input type="text" name="email">
+                    </div>
+                    <div class="login-input-wrapper">
+                        <label for="password">Mot de passe</label>
+                        <input type="text" name="password">
+                    </div>
+                </div>
+                
+                <div class="login-button-wrapper">
+                    <input type="submit" name="submit" value="Se connecter">
+                    <a>Mot de pass oublié</a>
+                </div>
+            </div>
+    </section>
+
+</main>
+
+<footer>
+	<nav>
+		<ul>
+			<li>Mentions Légales</li>
+		</ul>
+	</nav>
+</footer>
+</body>
+</html>
