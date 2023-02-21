@@ -151,3 +151,33 @@ try {
 catch(e) {
     console.log("Error :" + e.message)
 }
+
+
+// ---------------- MODAL ------------------ //
+
+const modal = document.querySelector('.modal-wrapper')
+const modifyGallery = document.querySelector('#modify-gallery')
+const modalContent = document.querySelector('.modal-content')
+
+const openModal = function() {
+    console.log('opened')
+    modal.style.display = 'flex'
+    modal.removeAttribute('aria-hidden')
+    modal.setAttribute('aria-modal', 'true')
+    modal.querySelector('#close-modal').addEventListener('click', closeModal)
+    modalContent.addEventListener('click', stopPropagation)
+}
+
+const closeModal = function() {
+    console.log('fermer')
+    modal.style.display = 'none'
+    modal.removeAttribute('aria-modal')
+    modal.setAttribute('aria-hidden', 'true')
+}
+
+const stopPropagation = function(e) {
+    e.stopPropagation()
+}
+
+modifyGallery.addEventListener('click', openModal)
+modal.addEventListener('click', closeModal)

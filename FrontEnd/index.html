@@ -9,6 +9,7 @@
 	<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Work+Sans&display=swap" rel="stylesheet">
 	<meta name="description" content="">
 	<link rel="stylesheet" href="./assets/style.css">
+	<link rel="stylesheet" href="./assets/modal.css">
 	<script src="https://kit.fontawesome.com/528309c352.js" crossorigin="anonymous"></script>
 	<script type="text/javascript" src="./index.js" async></script>
 </head>
@@ -49,15 +50,15 @@
 			<h2>Designer d'espace</h2>
 			<p>Je raconte votre histoire, je valorise vos idées. Je vous accompagne de la conception à la livraison finale du chantier.</p>
 			<p>Chaque projet sera étudié en commun, de façon à mettre en valeur les volumes, les matières et les couleurs dans le respect de l’esprit des lieux et le choix adapté des matériaux. Le suivi du chantier sera assuré dans le souci du détail, le respect du planning et du budget.</p>
-			<p>En cas de besoin, une équipe pluridisciplinaire peut-être constituée : architecte DPLG, décorateur(trice)</p>
+			<p>En cas de besoin, une équipe pluridisciplinaire peut-être constituée : architecte DPLG, décorateur(trice).</p>
 		</article>
 	</section>
 	<section id="portfolio">
 		<div class="portfolio-header">
 			<h2>Mes Projets</h2>
-			<div class="modify-wrapper">
+			<div class="modify-wrapper" id="modify-gallery" aria-controls="modal-wrapper">
 				<i class="fa-regular fa-pen-to-square"></i>
-				<p>Modifier</p>
+				<p >Modifier</p>
 			</div>
 		</div>
 		
@@ -77,6 +78,37 @@
 			<input type="submit" value="Envoyer">
 		</form>
 	</section>
+
+	<div class="modal-wrapper" aria-hidden="true" role="dialog">
+		<div class="modal-content">
+			<div class="modal-icon-wrapper">
+				<i class="fa-solid fa-arrow-left back-modal"></i>
+				<i class="fa-solid fa-xmark" id="close-modal"></i>
+			</div>
+			
+			<div id="modal-gallery" class="modal-switch-wrapper">
+				<div class="modal-title">
+					<h3>Galerie photo</h3>
+				</div>
+
+				<div class="modal-main-wrapper">
+					<div class="modal-photo">
+
+					</div>
+				</div>
+
+				<div class="modal-button-wrapper">
+					<div class="button">
+						<p>Ajouter une photo</p>
+					</div>
+
+					<p class="delete-all">Supprimer la galerie</p>
+				</div>
+			</div>
+			
+		</div>
+	</div>
+
 </main>
 
 <footer>
