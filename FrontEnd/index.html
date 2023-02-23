@@ -80,27 +80,24 @@
 	</section>
 
 	<div class="modal-wrapper" aria-hidden="true" role="dialog">
-		<div class="modal-content">
-			<div class="modal-icon-wrapper">
-				<i class="fa-solid fa-arrow-left back-modal"></i>
-				<i class="fa-solid fa-xmark" id="close-modal"></i>
-			</div>
+		<div class="modal-content" modal-content="gallery">
+			
+			<i class="fa-solid fa-arrow-left" id="back-modal" tabindex="0" role="back-modal"></i>
+			<i class="fa-solid fa-xmark" id="close-modal" tabindex="0" role="close-modal"></i>
+			
 			
 			<div id="modal-gallery" class="modal-switch-wrapper">
-				<div class="modal-title">
-					<h3>Galerie photo</h3>
+				<div class="modal-title" >
+					<h3></h3>
 				</div>
 
 				<div class="modal-main-wrapper">
-					<div class="modal-photo">
 
-					</div>
 				</div>
 
 				<div class="modal-button-wrapper">
-					<div class="button">
-						<p>Ajouter une photo</p>
-					</div>
+					
+					<button class="button" id="button-add-photo">Ajouter une photo</button>
 
 					<p class="delete-all">Supprimer la galerie</p>
 				</div>

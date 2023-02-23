@@ -1,6 +1,25 @@
 // ---------------- GALLERY ------------------ //
 
 const gallery = document.querySelector('.gallery')
+const galleryArray = []
+
+function galleryWorks() { 
+    galleryArray.forEach(element => {
+        const newFigure = document.createElement("figure");
+        const newImg = document.createElement("img")
+        const newFigcaption = document.createElement("figcaption")
+
+        newImg.src = element.imageUrl
+        newImg.alt = "photo"
+        newFigcaption.innerHTML = element.title
+
+        newFigure.setAttribute("categoryId", element.categoryId)
+        newFigure.appendChild(newImg)
+        newFigure.appendChild(newFigcaption)
+
+        gallery.appendChild(newFigure)
+    });
+}
 
 try {
     
@@ -13,20 +32,10 @@ try {
         if(response.ok) {
 
             data.forEach(element => {
-                const newFigure = document.createElement("figure");
-                const newImg = document.createElement("img")
-                const newFigcaption = document.createElement("figcaption")
+                galleryArray.push(element)
+            })
 
-                newImg.src = element.imageUrl
-                newFigcaption.innerHTML = element.title
-
-                newFigure.setAttribute("categoryId", element.categoryId)
-                newFigure.appendChild(newImg)
-                newFigure.appendChild(newFigcaption)
-                
-                gallery.appendChild(newFigure)
-            });
-            
+            galleryWorks()
         }
 
         else {
@@ -158,21 +167,107 @@ catch(e) {
 const modal = document.querySelector('.modal-wrapper')
 const modifyGallery = document.querySelector('#modify-gallery')
 const modalContent = document.querySelector('.modal-content')
+const modalMainWrapper = document.querySelector('.modal-main-wrapper')
+
+function galleryModal() { 
+    const photosWrapper = document.createElement('div')
+    photosWrapper.classList.add('photos-wrapper')
+
+    galleryArray.forEach(element => {
+        const newPhotoWrapper = document.createElement("div")
+        newPhotoWrapper.classList.add('modal-photo-wrapper')
+        newPhotoWrapper.setAttribute('idPhoto', element.id)
+
+        const iconsPhotoWrapper = document.createElement("div")
+        iconsPhotoWrapper.classList.add('icons-photo-wrapper')
+
+        const trash = document.createElement("i")
+        trash.classList.add('fa-regular', 'fa-trash-can')
+        trash.setAttribute("id", "trash")
+
+        const extend = document.createElement("i")
+        extend.classList.add('fa-solid', 'fa-up-down-left-right')
+        extend.setAttribute("id", "extend")
+
+        const photoWrapper = document.createElement('div')
+        photoWrapper.classList.add('photo-wrapper')
+
+        const photo = document.createElement('img')
+        photo.src = element.imageUrl
+        photo.alt = "photo"
+
+        const editText = document.createElement('p')
+        editText.innerHTML = "éditer"
+
+        photoWrapper.appendChild(photo)
+        iconsPhotoWrapper.append(trash, extend)
+        newPhotoWrapper.append(iconsPhotoWrapper, photoWrapper, editText)
+        photosWrapper.appendChild(newPhotoWrapper)
+    });
+
+    modalMainWrapper.appendChild(photosWrapper)
+}
+
+const addPhoto = function() {
+    const addPhotoWrapper = document.createElement('div')
+    addPhotoWrapper.classList.add('add-photo-wrapper')
+
+    const photoPreviewWrapper = document.createElement('div')
+    photoPreviewWrapper.classList.add('photo-preview-wrapper')
+    
+    addPhotoWrapper.append(photoPreviewWrapper)
+    modalMainWrapper.appendChild(addPhotoWrapper)
+}
+
+const switchModal = function() {
+    if(modalContent.getAttribute('modal-content') === 'gallery') {
+        modal.querySelector('#back-modal').style.display = 'none'
+        modalContent.querySelector('h3').innerHTML = 'Galerie photo'
+        modalContent.querySelector('#button-add-photo').innerHTML = 'Ajouter une photo'
+        modalContent.querySelector('#button-add-photo').disabled = false
+        modalContent.querySelector('.delete-all').style.display = 'flex'
+        document.querySelector('.photos-wrapper').style.display = 'flex'
+    }
+
+    else if(modalContent.getAttribute('modal-content') === 'add-photo') {
+        modal.querySelector('#back-modal').style.display = 'flex'
+        modalContent.querySelector('h3').innerHTML = 'Ajouter une photo'
+        modalContent.querySelector('#button-add-photo').innerHTML = 'Valider'
+        modalContent.querySelector('#button-add-photo').disabled = true
+        modalContent.querySelector('.delete-all').style.display = 'none'
+        document.querySelector('.photos-wrapper').style.display = 'none'
+        addPhoto()
+    }
+}
 
 const openModal = function() {
-    console.log('opened')
     modal.style.display = 'flex'
     modal.removeAttribute('aria-hidden')
     modal.setAttribute('aria-modal', 'true')
     modal.querySelector('#close-modal').addEventListener('click', closeModal)
     modalContent.addEventListener('click', stopPropagation)
+    modalContent.setAttribute('modal-content', 'gallery')
+
+    modal.querySelector('#button-add-photo').addEventListener('click', function() {
+        modalContent.setAttribute('modal-content', 'add-photo')
+        switchModal()
+    })
+
+    modal.querySelector('#back-modal').addEventListener('click', function() {
+        modalContent.setAttribute('modal-content', 'gallery')
+        switchModal()
+        document.querySelector('.add-photo-wrapper').remove()
+    })
+
+    galleryModal()
+    switchModal()
 }
 
 const closeModal = function() {
-    console.log('fermer')
     modal.style.display = 'none'
     modal.removeAttribute('aria-modal')
     modal.setAttribute('aria-hidden', 'true')
+    document.querySelector('.photos-wrapper').remove()
 }
 
 const stopPropagation = function(e) {
@@ -181,3 +276,10 @@ const stopPropagation = function(e) {
 
 modifyGallery.addEventListener('click', openModal)
 modal.addEventListener('click', closeModal)
+
+window.addEventListener('keydown', function(e) {
+    if(e.key === "Escape" || e.key === "Esc") {
+        closeModal(e)
+    }
+})
+

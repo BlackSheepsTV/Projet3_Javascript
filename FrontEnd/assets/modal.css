@@ -13,7 +13,6 @@
 .modal-content {
     position: relative;
     width: 630px;
-    height: 730px;
     padding: 0px 104px;
     border-radius: 10px;
     background-color: white;
@@ -26,16 +25,21 @@
     padding: 60px 0px 48px;
 }
 
-.modal-icon-wrapper {
+#back-modal {
     position: absolute;
-    width: 100%;
-    display: flex;
+    font-size: 24px;
     top: 32px;
-    left: 0;
-    padding: 0px 30px;
-    justify-content: space-between;
+    left: 30px;
+    cursor: pointer;
 }
 
+#close-modal {
+    position: absolute;
+    font-size: 24px;
+    top: 32px;
+    right: 30px;
+    cursor: pointer;
+}
 
 .modal-icon-wrapper i {
     font-size: 26px;
@@ -52,12 +56,97 @@
     line-height: 30.5px;
 }
 
+/* ---------- MODAL MAIN ---------- */
+  /* ------ modal gallery ------ */
 .modal-main-wrapper {
     width: 100%;
     display: flex;
-    flex: 1;
-    background-color: red;
+    padding-bottom: 35px;
+    border-bottom: 1px solid #B3B3B3;
 }
+
+.photos-wrapper {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    flex: 1;
+}
+
+.modal-photo-wrapper {
+    position: relative;
+    width: 18%;
+    height: 120px;
+    display: flex;
+    flex-direction: column;
+    margin-right: 8px;
+    margin-bottom: 12px;
+}
+
+.icons-photo-wrapper {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    z-index: 10;
+}
+
+.icons-photo-wrapper i{
+    width: 17px;
+    height: 17px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 3px;
+    color: white;
+    background-color: black;
+    cursor: pointer;
+    font-size: 10px;
+}
+
+.photo-wrapper {
+    position: relative;
+    display: flex;
+    margin-bottom: 4px;
+    flex: 1;
+}
+
+.photo-wrapper img {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    object-fit: cover;
+    flex: 2;
+}
+
+.modal-photo-wrapper p {
+    font-size: 12px;
+    line-height: 14px;
+}
+
+  /* ------ add photo ------ */
+
+.add-photo-wrapper {
+    width: 100%;
+    height: 400px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.photo-preview-wrapper {
+    width: 100%;
+    height: 170px;
+    display: flex;
+    flex-direction: column;
+    border-radius: 3px;
+    background-color: #E8F1F7;
+}
+
+/* ---------- MODAL END BUTTON ---------- */
 
 .modal-button-wrapper {
     display: flex;
@@ -66,7 +155,7 @@
 }
 
 .modal-button-wrapper .button {
-    max-width: 237px;
+    width: 237px;
     font-family: 'Syne';
 	font-weight: 700;
 	margin: 38px 0px 23px;
@@ -76,6 +165,14 @@
     color: white;
 	background-color: #1D6154;
 	cursor: pointer;
+}
+
+.button:hover {
+    background-color: #0E2F28;
+}
+
+.button[disabled] {
+    background-color: #A7A7A7;
 }
 
 .delete-all {
