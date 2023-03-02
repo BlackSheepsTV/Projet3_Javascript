@@ -51,6 +51,7 @@ catch(e) {
 // ---------------- CATEGORIES ------------------ //
 
 const portfolio = document.getElementById('portfolio')
+const categoriesArray = []
 
 try {
     fetch('http://localhost:5678/api/categories', {
@@ -71,12 +72,16 @@ try {
 
             portfolio.insertBefore(filterCategoriesWrapper, gallery)
 
-            const categories = new Set()
-            categories.add({"id": 0, "name": 'Tous'})
-
             data.forEach(element => {
-                categories.add(element)
+                categoriesArray.push(element)
             });
+
+            const categories = new Set()
+
+            categories.add({"id": 0, "name": 'Tous'})
+            categoriesArray.forEach(category => {
+                categories.add(category)
+            })
 
             categories.forEach(element => {
                 const category = document.createElement('div')
@@ -168,6 +173,7 @@ const modal = document.querySelector('.modal-wrapper')
 const modifyGallery = document.querySelector('#modify-gallery')
 const modalContent = document.querySelector('.modal-content')
 const modalMainWrapper = document.querySelector('.modal-main-wrapper')
+const addPhotoForm = document.querySelector('.modal-switch-wrapper form')
 
 function galleryModal() { 
     const photosWrapper = document.createElement('div')
@@ -189,9 +195,6 @@ function galleryModal() {
         extend.classList.add('fa-solid', 'fa-up-down-left-right')
         extend.setAttribute("id", "extend")
 
-        const photoWrapper = document.createElement('div')
-        photoWrapper.classList.add('photo-wrapper')
-
         const photo = document.createElement('img')
         photo.src = element.imageUrl
         photo.alt = "photo"
@@ -199,9 +202,8 @@ function galleryModal() {
         const editText = document.createElement('p')
         editText.innerHTML = "éditer"
 
-        photoWrapper.appendChild(photo)
         iconsPhotoWrapper.append(trash, extend)
-        newPhotoWrapper.append(iconsPhotoWrapper, photoWrapper, editText)
+        newPhotoWrapper.append(iconsPhotoWrapper, photo, editText)
         photosWrapper.appendChild(newPhotoWrapper)
     });
 
@@ -212,33 +214,130 @@ const addPhoto = function() {
     const addPhotoWrapper = document.createElement('div')
     addPhotoWrapper.classList.add('add-photo-wrapper')
 
+    /* ------ Photo preview ------ */
+
     const photoPreviewWrapper = document.createElement('div')
     photoPreviewWrapper.classList.add('photo-preview-wrapper')
+
+    const imgPreview = document.createElement('img')
+    imgPreview.alt = 'imgPreview'
+
+    const iconImg = document.createElement('i')
+    iconImg.classList.add('fa-regular', 'fa-image')
+
+    const buttonAddPhoto = document.createElement('label')
+    buttonAddPhoto.htmlFor = 'photo'
+    buttonAddPhoto.innerHTML = '+ Ajouter photo'
+    const fileAddPhoto = document.createElement('input')
+    fileAddPhoto.type = 'file'
+    fileAddPhoto.name = 'photo'
+    fileAddPhoto.id = 'photo'
+    fileAddPhoto.accept = "image/png, image/jpg"
+    fileAddPhoto.size = "400"
+
+    const maxImgSizeText = document.createElement('p')
+    maxImgSizeText.innerHTML = 'jpg, png : 4mo max'
+    maxImgSizeText.style.color = '#444444'
+    maxImgSizeText.style.fontSize = '10px'
+    maxImgSizeText.style.lineHeight = '11px'
+
+    fileAddPhoto.addEventListener("change", function() {
+        const file = this.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = function() {
+                const result = reader.result;
+                imgPreview.src = result;
+            }
+            imgPreview.style.display = "flex"
+            iconImg.style.display = "none"
+            buttonAddPhoto.style.display = "none"
+            maxImgSizeText.style.display = "none"
+        }
     
-    addPhotoWrapper.append(photoPreviewWrapper)
+        else {
+            iconImg.style.display = "flex"
+            buttonAddPhoto.style.display = "flex"
+            maxImgSizeText.style.display = "flex"
+            imgPreview.style.display = "none"
+        }
+    })
+
+    photoPreviewWrapper.append(imgPreview, iconImg, buttonAddPhoto, fileAddPhoto, maxImgSizeText)
+    /* ------ Photo infos ------ */
+
+    const photoInfosWrapper = document.createElement('div')
+    photoInfosWrapper.classList.add('add-photo-infos-wrapper')
+
+    /* Title */
+
+    const photoTitleWrapper = document.createElement('div')
+    photoTitleWrapper.classList.add('add-photo-title-wrapper')
+
+    const photoTitle = document.createElement('label')
+    photoTitle.innerHTML = 'Titre'
+    photoTitle.htmlFor = 'titre'
+
+    const inputTitle = document.createElement('input')
+    inputTitle.type = 'text'
+    inputTitle.name = 'title'
+
+    photoTitleWrapper.append(photoTitle, inputTitle)
+
+    /* Category */
+
+    const photoCategoryWrapper = document.createElement('div')
+    photoCategoryWrapper.classList.add('add-photo-title-wrapper')
+
+    const photoCategory = document.createElement('label')
+    photoCategory.innerHTML = 'Catégorie'
+    photoCategory.htmlFor = 'category'
+
+    const inputCategory = document.createElement('select')
+    inputCategory.name = 'category'
+
+    categoriesArray.forEach(element => {
+        const category = document.createElement('option')
+        category.value = element.name
+        category.innerHTML = element.name
+        inputCategory.append(category)
+    })
+
+    photoCategoryWrapper.append(photoCategory, inputCategory)
+
+
+    photoInfosWrapper.append(photoTitleWrapper, photoCategoryWrapper)
+
+    addPhotoWrapper.append(photoPreviewWrapper, photoInfosWrapper)
     modalMainWrapper.appendChild(addPhotoWrapper)
 }
 
 const switchModal = function() {
     if(modalContent.getAttribute('modal-content') === 'gallery') {
+        
         modal.querySelector('#back-modal').style.display = 'none'
         modalContent.querySelector('h3').innerHTML = 'Galerie photo'
-        modalContent.querySelector('#button-add-photo').innerHTML = 'Ajouter une photo'
+        modalContent.querySelector('#button-add-photo').value = 'Ajouter une photo'
         modalContent.querySelector('#button-add-photo').disabled = false
-        modalContent.querySelector('.delete-all').style.display = 'flex'
+        modalContent.querySelector('a').style.display = 'flex'
         document.querySelector('.photos-wrapper').style.display = 'flex'
+        document.querySelector('.add-photo-wrapper').style.display = "none"
     }
 
     else if(modalContent.getAttribute('modal-content') === 'add-photo') {
+
         modal.querySelector('#back-modal').style.display = 'flex'
         modalContent.querySelector('h3').innerHTML = 'Ajouter une photo'
-        modalContent.querySelector('#button-add-photo').innerHTML = 'Valider'
+        modalContent.querySelector('#button-add-photo').value = 'Valider'
         modalContent.querySelector('#button-add-photo').disabled = true
-        modalContent.querySelector('.delete-all').style.display = 'none'
+        modalContent.querySelector('a').style.display = 'none'
+        document.querySelector('.add-photo-wrapper').style.display = "flex"
         document.querySelector('.photos-wrapper').style.display = 'none'
-        addPhoto()
     }
 }
+
+/* ------ OPEN ------ */
 
 const openModal = function() {
     modal.style.display = 'flex'
@@ -250,16 +349,22 @@ const openModal = function() {
 
     modal.querySelector('#button-add-photo').addEventListener('click', function() {
         modalContent.setAttribute('modal-content', 'add-photo')
-        switchModal()
+        switchModal() 
     })
 
     modal.querySelector('#back-modal').addEventListener('click', function() {
         modalContent.setAttribute('modal-content', 'gallery')
         switchModal()
-        document.querySelector('.add-photo-wrapper').remove()
     })
 
-    galleryModal()
+    if(!modal.querySelector('.photos-wrapper')) {
+        galleryModal()
+    }
+    
+    if(!modal.querySelector('.add-photo-wrapper')) {
+        addPhoto()
+    }
+    
     switchModal()
 }
 
@@ -267,7 +372,9 @@ const closeModal = function() {
     modal.style.display = 'none'
     modal.removeAttribute('aria-modal')
     modal.setAttribute('aria-hidden', 'true')
-    document.querySelector('.photos-wrapper').remove()
+    document.querySelector('.photos-wrapper').style.display = "none"
+    document.querySelector('.add-photo-wrapper').style.display = "none"
+    addPhotoForm.reset()
 }
 
 const stopPropagation = function(e) {

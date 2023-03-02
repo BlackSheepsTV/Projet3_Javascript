@@ -55,6 +55,10 @@ table {
 button {
 	border: none;
 }
+
+input {
+	border: none;
+}
 /** end reset css**/
 html {
 	width: 100%;
