@@ -22,6 +22,7 @@
     height: inherit;
     display: flex;
     flex-direction: column;
+    align-items: center;
     padding: 60px 0px 48px;
 }
 
@@ -59,6 +60,7 @@
 /* ---------- MODAL MAIN ---------- */
   /* ------ modal gallery ------ */
   .modal-content form {
+    width: 100%;
     display: flex;  
     flex-direction: column;
     align-items: center;
@@ -218,7 +220,7 @@
     align-items: center;
 }
 
-.modal-button-wrapper input {
+.modal-button-wrapper input, .modal-button-wrapper button {
     width: 237px;
     font-family: 'Syne';
 	font-weight: 700;
@@ -231,12 +233,13 @@
 	cursor: pointer;
 }
 
-.button:hover {
+.modal-button-wrapper input:hover, .modal-button-wrapper button:hover {
     background-color: #0E2F28;
 }
 
-.button[disabled] {
+.modal-button-wrapper input[disabled] {
     background-color: #A7A7A7;
+    cursor: not-allowed;
 }
 
 .modal-button-wrapper a {

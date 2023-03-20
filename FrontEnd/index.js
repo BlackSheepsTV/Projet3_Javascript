@@ -1,10 +1,38 @@
+const portfolio = document.getElementById('portfolio')
+const getToken = localStorage.getItem('token')
+const loginButton = document.querySelector('#login')
+const loginLink = document.createElement('a')
+const modifyWrapper = document.querySelectorAll('.modify-wrapper')
+const editModeWrpaper = document.querySelector('.edit-mode-wrpaper')
+const navWrapper = document.querySelector('.nav-wrapper')
+const modal = document.querySelector('.modal-wrapper')
+const modifyGallery = document.querySelector('#modify-gallery')
+const modalContent = document.querySelector('.modal-content')
+const modalMainWrapper = document.querySelector('.modal-main-wrapper')
+const addPhotoForm = document.querySelector('.modal-switch-wrapper form')
+const gallery = document.querySelector('.gallery')
+const errorMessageDelete = document.querySelector('.modal-switch-wrapper p')
+
 // ---------------- GALLERY ------------------ //
 
-const gallery = document.querySelector('.gallery')
-const galleryArray = []
+async function getGalleryArray() {
+    const res = await fetch('http://localhost:5678/api/works', {
+        method: 'GET',
+        headers : { 'Accept': "application/json"}
+    })
+    .then(res => res.json())
+    .then(json => {
+        if (json) {
+            return json
+        } else {
+            return []
+        }
+    })
+    return res
+}
 
-function galleryWorks() { 
-    galleryArray.forEach(element => {
+function createGalleryWorks(array) { 
+    array.forEach(element => {
         const newFigure = document.createElement("figure");
         const newImg = document.createElement("img")
         const newFigcaption = document.createElement("figcaption")
@@ -21,165 +49,235 @@ function galleryWorks() {
     });
 }
 
-try {
-    
-    fetch('http://localhost:5678/api/works', {
-        method: 'GET',
-        headers : { 'Accept': "application/json"}
-    })
-
-    .then(response => response.json() .then(data => {
-        if(response.ok) {
-
-            data.forEach(element => {
-                galleryArray.push(element)
-            })
-
-            galleryWorks()
-        }
-
-        else {
-            console.log('An error has occured')
-        }
-    }))
-}
-
-catch(e) {
-    console.log('Fetch error : ' + e.message);
-}
-
 // ---------------- CATEGORIES ------------------ //
 
-const portfolio = document.getElementById('portfolio')
-const categoriesArray = []
-
-try {
-    fetch('http://localhost:5678/api/categories', {
+async function getCategoriesArray() {
+    const res = await fetch('http://localhost:5678/api/categories', {
         method: 'GET',
         headers : { 'Accept': "application/json"}
     })
-
-    .then(response => response.json() .then(data => {
-        if(response.ok) {
-
-            const filterCategoriesWrapper = document.createElement("div")
-
-            filterCategoriesWrapper.classList.add("filter-categories-wrapper")
-            filterCategoriesWrapper.style.display = "flex"
-            filterCategoriesWrapper.style.justifyContent = "center"
-            filterCategoriesWrapper.style.alignItems = "center"
-            filterCategoriesWrapper.style.width = '100%'
-
-            portfolio.insertBefore(filterCategoriesWrapper, gallery)
-
-            data.forEach(element => {
-                categoriesArray.push(element)
-            });
-
-            const categories = new Set()
-
-            categories.add({"id": 0, "name": 'Tous'})
-            categoriesArray.forEach(category => {
-                categories.add(category)
-            })
-
-            categories.forEach(element => {
-                const category = document.createElement('div')
-                category.setAttribute('categoryId', element.id)
-                category.classList.add("category")
-                category.style.display = "flex"
-                category.style.justifyContent = "center"
-                category.style.alignItems = "center"
-                category.style.borderRadius = "60px"
-                category.style.border = "1px solid #1D6154"
-                category.innerHTML = element.name
-                filterCategoriesWrapper.appendChild(category)
-
-                category.addEventListener('click', function(category) {
-                    const galleryChildren = gallery.children
-                    for(let i = 0; i < galleryChildren.length; i++) {
-                        if(category.target.getAttribute('categoryId') == galleryChildren[i].getAttribute('categoryId') || category.target.getAttribute('categoryId') == 0) {
-                            galleryChildren[i].style.display = "block"
-                       }
-
-                       else {
-                            galleryChildren[i].style.display = "none"
-                       }
-                    }
-                })
-            })    
+    .then(res => res.json())
+    .then(json => {
+        if (json) {
+            return json
+        } else {
+            return []
         }
-
-        else {
-            console.log('An error has occured')
-        }
-    }))
+    })
+    return res
 }
 
-catch(e) {
-    console.log('Fetch error : ' + e.message);
+async function createFiltered(array) { 
+   
+    const filterCategoriesWrapper = document.createElement("div")
+
+    filterCategoriesWrapper.classList.add("filter-categories-wrapper")
+    filterCategoriesWrapper.style.display = "flex"
+    filterCategoriesWrapper.style.justifyContent = "center"
+    filterCategoriesWrapper.style.alignItems = "center"
+    filterCategoriesWrapper.style.width = '100%'
+
+    portfolio.insertBefore(filterCategoriesWrapper, gallery)
+
+    const categories = new Set()
+
+    categories.add({"id": 0, "name": 'Tous'})
+    array.forEach(category => {
+        categories.add(category)
+    })
+
+    categories.forEach(element => {
+        const category = document.createElement('div')
+        category.setAttribute('categoryId', element.id)
+        category.classList.add("category")
+        category.style.display = "flex"
+        category.style.justifyContent = "center"
+        category.style.alignItems = "center"
+        category.style.borderRadius = "60px"
+        category.style.border = "1px solid #1D6154"
+        category.innerHTML = element.name
+        filterCategoriesWrapper.appendChild(category)
+
+        category.addEventListener('click', function(category) {
+            const galleryChildren = gallery.children
+            for(let i = 0; i < galleryChildren.length; i++) {
+                if(category.target.getAttribute('categoryId') == galleryChildren[i].getAttribute('categoryId') || category.target.getAttribute('categoryId') == 0) {
+                    galleryChildren[i].style.display = "block"
+            }
+
+            else {
+                    galleryChildren[i].style.display = "none"
+            }
+            }
+        })
+    })              
+}
+
+async function fillPage() {
+    try {
+        createGalleryWorks(await getGalleryArray())
+        createFiltered(await getCategoriesArray())  
+    }
+    
+    catch(e) {
+        console.log('Fetch error : ' + e.message);
+    }
+}
+
+// ---------------- DELETE ------------------ //
+
+async function deletePhoto(id) {
+    try {
+
+        const token = localStorage.getItem('token')
+        
+        const response = await fetch('http://localhost:5678/api/works/' + id, {
+            method: 'DELETE',
+            headers : { 'Accept': 'application/json', 'Content-Type': 'application/json', Authorization: `Bearer ${token}`},
+        })
+        console.log(response)
+        
+
+        if(response.ok) {
+            errorMessageDelete.classList.add("success-message")
+            errorMessageDelete.style.display = "flex"
+            errorMessageDelete.style.position = "absolute"
+            errorMessageDelete.style.top = "100px"
+            errorMessageDelete.innerHTML = "Photo supprimé"
+            console.log(response)
+        }
+
+        else if(response.status === 404) {
+            errorMessageDelete.classList.add("error-message")
+            errorMessageDelete.style.display = "flex"
+            errorMessageDelete.innerHTML = "Une erreur s'est produite"
+               console.log(response)
+        }
+    }
+
+    catch(e) {
+        console.log('Fetch error : ' + e.message);
+    }
 }
 
 // ---------------- WHEN LOGGED ------------------ //
 
-const getToken = localStorage.getItem('token')
-const loginButton = document.querySelector('#login')
-const loginLink = document.createElement('a')
-const modifyWrapper = document.querySelectorAll('.modify-wrapper')
-const editModeWrpaper = document.querySelector('.edit-mode-wrpaper')
-const navWrapper = document.querySelector('.nav-wrapper')
+async function checkIfLogged() {
+    try {
+        if(getToken !== null) {
+            loginLink.innerHTML = "Logout"
+            loginLink.href = "./index.html"
+            loginButton.appendChild(loginLink)
+    
+            loginLink.addEventListener('click', function() {
+                localStorage.removeItem('token')
+            })
+    
+            for(let i = 0; i < modifyWrapper.length; i++) {
+                modifyWrapper[i].style.display = 'flex'
+           }
+    
+           editModeWrpaper.style.display = 'flex'
+           navWrapper.style.marginTop = '90px'
+        }
+    
+        else {
+            loginLink.innerHTML = "Login"
+            loginLink.href = "./login.html"
+    
+            loginButton.appendChild(loginLink)
+    
+            for(let i=0; i < modifyWrapper.length; i++) {
+                modifyWrapper[i].style.display = 'none'
+            }
+    
+           
+            
+        }
+    }
+    
+    catch(e) {
+        console.log("Error :" + e.message)
+    }
+}
 
-try {
-    if(getToken !== null) {
-        loginLink.innerHTML = "Logout"
-        loginLink.href = "./index.html"
-        loginButton.appendChild(loginLink)
+// ---------------- MODAL ------------------ //
 
-        loginLink.addEventListener('click', function() {
-            localStorage.removeItem('token')
-        })
+function stopPropagation(e) {
+    e.stopPropagation()
+}
 
-        for(let i = 0; i < modifyWrapper.length; i++) {
-            modifyWrapper[i].style.display = 'flex'
-       }
+async function openModal() {
+    modal.style.display = 'flex'
+    modal.removeAttribute('aria-hidden')
+    modal.setAttribute('aria-modal', 'true')
+    modal.querySelector('#close-modal').addEventListener('click', closeModal)
+    modalContent.addEventListener('click', stopPropagation)
+    modalContent.setAttribute('modal-content', 'gallery')
 
-       editModeWrpaper.style.display = 'flex'
-       navWrapper.style.marginTop = '90px'
+    if(!modal.querySelector('.photos-wrapper')) {
+        await galleryModal()
+    }
+    
+    if(!modal.querySelector('.add-photo-wrapper')) {
+        await addPhoto()
+    }
+    
+    switchModal()
+}
+
+function closeModal() {
+    modal.style.display = 'none'
+    modal.removeAttribute('aria-modal')
+    modal.setAttribute('aria-hidden', 'true')
+    document.querySelector('.photos-wrapper').style.display = "none"
+    document.querySelector('.add-photo-wrapper').style.display = "none"
+    addPhotoForm.reset()
+}
+
+function switchModal() {
+    errorMessageDelete.style.display = 'none'
+    if(modalContent.getAttribute('modal-content') === 'gallery') {
+        
+        modal.querySelector('#back-modal').style.display = 'none'
+        modalContent.querySelector('h3').innerHTML = 'Galerie photo'
+        modalContent.querySelector('#button-add-photo').style.display = 'none'
+        modalContent.querySelector('.modal-button-wrapper button').style.display = 'flex'
+        modalContent.querySelector('a').style.display = 'flex'
+        document.querySelector('.photos-wrapper').style.display = 'flex'
+        document.querySelector('.add-photo-wrapper').style.display = "none"
+        document.querySelector('.photo-preview-wrapper img').style.display = "none"
+
     }
 
-    else {
-        loginLink.innerHTML = "Login"
-        loginLink.href = "./login.html"
+    else if(modalContent.getAttribute('modal-content') === 'add-photo') {
 
-        loginButton.appendChild(loginLink)
-
-        for(let i=0; i < modifyWrapper.length; i++) {
-            modifyWrapper[i].style.display = 'none'
-        }
-
-       
+        modal.querySelector('#back-modal').style.display = 'flex'
+        modalContent.querySelector('h3').innerHTML = 'Ajouter une photo'
+        modalContent.querySelector('#button-add-photo').value = 'Valider'
+        modalContent.querySelector('#button-add-photo').disabled = true
+        modalContent.querySelector('#button-add-photo').style.display = 'block'
+        modalContent.querySelector('.modal-button-wrapper button').style.display = 'none'
+        modalContent.querySelector('a').style.display = 'none'
+        document.querySelector('.add-photo-wrapper').style.display = "flex"
+        document.querySelector('.photos-wrapper').style.display = 'none'
+        document.querySelector('.photo-preview-wrapper i').style.display = "flex"
+        document.querySelector('.photo-preview-wrapper label').style.display = "flex"
+        document.querySelector('.photo-preview-wrapper p').style.display = "flex"
         
     }
 }
 
-catch(e) {
-    console.log("Error :" + e.message)
-}
+// ---------------- CREATE MODAL GALLERY ------------------ //
 
-
-// ---------------- MODAL ------------------ //
-
-const modal = document.querySelector('.modal-wrapper')
-const modifyGallery = document.querySelector('#modify-gallery')
-const modalContent = document.querySelector('.modal-content')
-const modalMainWrapper = document.querySelector('.modal-main-wrapper')
-const addPhotoForm = document.querySelector('.modal-switch-wrapper form')
-
-function galleryModal() { 
+async function galleryModal() { 
     const photosWrapper = document.createElement('div')
+    console.log('j\'ajoute photos-wrapper')
     photosWrapper.classList.add('photos-wrapper')
+    console.log(photosWrapper)
 
-    galleryArray.forEach(element => {
+    const array = await getGalleryArray()
+    array.forEach(element => {
         const newPhotoWrapper = document.createElement("div")
         newPhotoWrapper.classList.add('modal-photo-wrapper')
         newPhotoWrapper.setAttribute('idPhoto', element.id)
@@ -190,6 +288,11 @@ function galleryModal() {
         const trash = document.createElement("i")
         trash.classList.add('fa-regular', 'fa-trash-can')
         trash.setAttribute("id", "trash")
+
+        trash.addEventListener('click', function() {
+            deletePhoto(element.id)
+            newPhotoWrapper.remove()
+        })
 
         const extend = document.createElement("i")
         extend.classList.add('fa-solid', 'fa-up-down-left-right')
@@ -210,7 +313,7 @@ function galleryModal() {
     modalMainWrapper.appendChild(photosWrapper)
 }
 
-const addPhoto = function() {
+async function addPhoto() {
     const addPhotoWrapper = document.createElement('div')
     addPhotoWrapper.classList.add('add-photo-wrapper')
 
@@ -226,12 +329,12 @@ const addPhoto = function() {
     iconImg.classList.add('fa-regular', 'fa-image')
 
     const buttonAddPhoto = document.createElement('label')
-    buttonAddPhoto.htmlFor = 'photo'
+    buttonAddPhoto.htmlFor = 'image'
     buttonAddPhoto.innerHTML = '+ Ajouter photo'
     const fileAddPhoto = document.createElement('input')
     fileAddPhoto.type = 'file'
-    fileAddPhoto.name = 'photo'
-    fileAddPhoto.id = 'photo'
+    fileAddPhoto.name = 'image'
+    fileAddPhoto.id = 'image'
     fileAddPhoto.accept = "image/png, image/jpg"
     fileAddPhoto.size = "400"
 
@@ -254,6 +357,7 @@ const addPhoto = function() {
             iconImg.style.display = "none"
             buttonAddPhoto.style.display = "none"
             maxImgSizeText.style.display = "none"
+            modalContent.querySelector('#button-add-photo').disabled = false
         }
     
         else {
@@ -265,6 +369,7 @@ const addPhoto = function() {
     })
 
     photoPreviewWrapper.append(imgPreview, iconImg, buttonAddPhoto, fileAddPhoto, maxImgSizeText)
+
     /* ------ Photo infos ------ */
 
     const photoInfosWrapper = document.createElement('div')
@@ -277,11 +382,12 @@ const addPhoto = function() {
 
     const photoTitle = document.createElement('label')
     photoTitle.innerHTML = 'Titre'
-    photoTitle.htmlFor = 'titre'
+    photoTitle.htmlFor = 'title'
 
     const inputTitle = document.createElement('input')
     inputTitle.type = 'text'
     inputTitle.name = 'title'
+    inputTitle.id = "title"
 
     photoTitleWrapper.append(photoTitle, inputTitle)
 
@@ -296,10 +402,12 @@ const addPhoto = function() {
 
     const inputCategory = document.createElement('select')
     inputCategory.name = 'category'
+    inputCategory.id = 'category'
 
-    categoriesArray.forEach(element => {
+    const array = await getCategoriesArray()
+    array.forEach(element => {
         const category = document.createElement('option')
-        category.value = element.name
+        category.value = element.id
         category.innerHTML = element.name
         inputCategory.append(category)
     })
@@ -313,41 +421,63 @@ const addPhoto = function() {
     modalMainWrapper.appendChild(addPhotoWrapper)
 }
 
-const switchModal = function() {
-    if(modalContent.getAttribute('modal-content') === 'gallery') {
-        
-        modal.querySelector('#back-modal').style.display = 'none'
-        modalContent.querySelector('h3').innerHTML = 'Galerie photo'
-        modalContent.querySelector('#button-add-photo').value = 'Ajouter une photo'
-        modalContent.querySelector('#button-add-photo').disabled = false
-        modalContent.querySelector('a').style.display = 'flex'
-        document.querySelector('.photos-wrapper').style.display = 'flex'
-        document.querySelector('.add-photo-wrapper').style.display = "none"
-    }
+// ---------------- ADD WORK ------------------ //
 
-    else if(modalContent.getAttribute('modal-content') === 'add-photo') {
-
-        modal.querySelector('#back-modal').style.display = 'flex'
-        modalContent.querySelector('h3').innerHTML = 'Ajouter une photo'
-        modalContent.querySelector('#button-add-photo').value = 'Valider'
-        modalContent.querySelector('#button-add-photo').disabled = true
-        modalContent.querySelector('a').style.display = 'none'
-        document.querySelector('.add-photo-wrapper').style.display = "flex"
-        document.querySelector('.photos-wrapper').style.display = 'none'
+async function sendFormPhoto(event) {
+    event.preventDefault()
+    if(document.querySelector('.error-login-message')) {
+        document.querySelector('.error-login-message').remove()
     }
+        try {
+            const formData = new FormData(addPhotoForm)
+           
+            const token = localStorage.getItem('token')
+
+            const response = await fetch('http://localhost:5678/api/works', {
+                method: 'POST',
+                headers : { 'Accept': "application/json", Authorization: `Bearer ${token}`},
+                body: formData,
+            })
+
+            const resData = await response.json()
+    
+            if(response.ok) {
+                errorMessageDelete.classList.add("success-message")
+                errorMessageDelete.style.display = "flex"
+                errorMessageDelete.style.position = "absolute"
+                errorMessageDelete.style.top = "100px"
+                errorMessageDelete.innerHTML = "Photo ajouté"
+               console.log(resData)
+            }
+
+            else if(response.status === 400) {
+                errorMessageDelete.classList.add("error-message")
+                errorMessageDelete.style.display = "flex"
+                errorMessageDelete.innerHTML = "Veuillez remplir tous les champs !"
+                console.log(response)
+            }
+        }
+
+        catch(e) {
+            console.log(e.message)
+            
+        }
 }
 
-/* ------ OPEN ------ */
+// ---------------- Listeners ------------------ //
 
-const openModal = function() {
-    modal.style.display = 'flex'
-    modal.removeAttribute('aria-hidden')
-    modal.setAttribute('aria-modal', 'true')
-    modal.querySelector('#close-modal').addEventListener('click', closeModal)
-    modalContent.addEventListener('click', stopPropagation)
-    modalContent.setAttribute('modal-content', 'gallery')
+function startListeners() {
+    modifyGallery.addEventListener('click', openModal)
+    modal.addEventListener('click', closeModal)
 
-    modal.querySelector('#button-add-photo').addEventListener('click', function() {
+    window.addEventListener('keydown', function(e) {
+        if(e.key === "Escape" || e.key === "Esc") {
+            closeModal(e)
+        }
+    })
+
+    modal.querySelector('.modal-button-wrapper button').addEventListener('click', function(e) {
+        e.preventDefault()
         modalContent.setAttribute('modal-content', 'add-photo')
         switchModal() 
     })
@@ -357,36 +487,13 @@ const openModal = function() {
         switchModal()
     })
 
-    if(!modal.querySelector('.photos-wrapper')) {
-        galleryModal()
-    }
-    
-    if(!modal.querySelector('.add-photo-wrapper')) {
-        addPhoto()
-    }
-    
-    switchModal()
+    modalContent.querySelector('#button-add-photo').addEventListener('click', function(e) {
+        sendFormPhoto(e)
+    })
 }
 
-const closeModal = function() {
-    modal.style.display = 'none'
-    modal.removeAttribute('aria-modal')
-    modal.setAttribute('aria-hidden', 'true')
-    document.querySelector('.photos-wrapper').style.display = "none"
-    document.querySelector('.add-photo-wrapper').style.display = "none"
-    addPhotoForm.reset()
-}
+// ---------------- Execute fonction ------------------ //
 
-const stopPropagation = function(e) {
-    e.stopPropagation()
-}
-
-modifyGallery.addEventListener('click', openModal)
-modal.addEventListener('click', closeModal)
-
-window.addEventListener('keydown', function(e) {
-    if(e.key === "Escape" || e.key === "Esc") {
-        closeModal(e)
-    }
-})
-
+checkIfLogged()
+fillPage()
+startListeners()

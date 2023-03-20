@@ -141,6 +141,21 @@ h2{
 	color: #1D6154
 	
 }
+.error-message {
+	
+	padding: 10px 15px;
+    background-color: #ff4d4d;
+    border-radius: 10px;
+    color: #990000;
+}
+.success-message {
+	
+	padding: 10px 15px;
+    background-color: #80ff80;
+    border-radius: 10px;
+    color: #006600;
+}
+
 nav ul {
 	display: flex;
 	align-items: center;

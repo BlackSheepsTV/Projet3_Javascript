@@ -1,5 +1,6 @@
 const formLogin = document.querySelector('.login-wrapper form')
 const loginTitle = document.querySelector('.login-wrapper h2')
+const loginSubmit = document.querySelector('#login-submit')
 
 async function login(event) {
     event.preventDefault()
@@ -23,9 +24,10 @@ async function login(event) {
                document.location.href="index.html"
             }
 
-            else if(response.status === 404) {
+            else if(response.status === 404 || response.status === 401) {
                     const errorLogin = document.createElement('p')
-                    errorLogin.classList.add('error-login-message')
+                    errorLogin.classList.add('error-login-message', 'error-message')
+                    errorLogin.style.display = "flex"
                     errorLogin.innerHTML = "Erreur dans l'identifiant ou le mot de passe"
     
                     loginTitle.after(errorLogin)
@@ -37,3 +39,7 @@ async function login(event) {
             
         }
 }
+
+loginSubmit.addEventListener('click', function(e) {
+    login(e)
+})
