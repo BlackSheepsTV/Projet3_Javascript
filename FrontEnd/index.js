@@ -133,7 +133,7 @@ async function fillPage() {
 
 async function deletePhoto(id, modalPhotowrapper) {
     try {
-
+        deleteApiMessage()
         const token = localStorage.getItem('token')
         
         const response = await fetch('http://localhost:5678/api/works/' + id, {
