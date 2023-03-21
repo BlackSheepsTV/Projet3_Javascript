@@ -461,6 +461,7 @@ async function sendFormPhoto(event) {
                 errorMessageDelete.innerHTML = "Photo ajouté"
                 createNewFigure(resData)
                 createModalPhotoWrapper(resData)
+                addPhotoForm.reset()
             }
 
             else if(response.status === 400) {
@@ -497,6 +498,7 @@ function startListeners() {
     modal.querySelector('#back-modal').addEventListener('click', function() {
         modalContent.setAttribute('modal-content', 'gallery')
         switchModal()
+        addPhotoForm.reset()
     })
 
     modalContent.querySelector('#button-add-photo').addEventListener('click', function(e) {
