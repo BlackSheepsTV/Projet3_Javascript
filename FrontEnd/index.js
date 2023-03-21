@@ -132,8 +132,8 @@ async function fillPage() {
 // ---------------- DELETE ------------------ //
 
 async function deletePhoto(id, modalPhotowrapper) {
+    deleteApiMessage()
     try {
-        deleteApiMessage()
         const token = localStorage.getItem('token')
         
         const response = await fetch('http://localhost:5678/api/works/' + id, {
@@ -152,14 +152,12 @@ async function deletePhoto(id, modalPhotowrapper) {
         }
 
         else if(response.status === 404) {
-            errorMessageDelete.classList.add("error-message")
-            errorMessageDelete.style.display = "flex"
-            errorMessageDelete.innerHTML = "Une erreur s'est produite"
+            createApiMessageError("Une erreur s'est produite")
         }
     }
 
     catch(e) {
-        console.log('Fetch error : ' + e.message);
+        createApiMessageError("Une erreur s'est produite")
     }
 }
 
