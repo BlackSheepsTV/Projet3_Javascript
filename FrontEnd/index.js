@@ -12,8 +12,6 @@ const modalMainWrapper = document.querySelector('.modal-main-wrapper')
 const addPhotoForm = document.querySelector('.modal-switch-wrapper form')
 const gallery = document.querySelector('.gallery')
 const galleryChildren = gallery.children
-const errorMessageDelete = document.querySelector('.modal-switch-wrapper p')
-
 
 // ---------------- GALLERY ------------------ //
 
@@ -142,15 +140,9 @@ async function deletePhoto(id, modalPhotowrapper) {
             method: 'DELETE',
             headers : { 'Accept': 'application/json', 'Content-Type': 'application/json', Authorization: `Bearer ${token}`},
         })
-        console.log(response)
         
-
         if(response.ok) {
-            errorMessageDelete.classList.add("success-message")
-            errorMessageDelete.style.display = "flex"
-            errorMessageDelete.style.position = "absolute"
-            errorMessageDelete.style.top = "95px"
-            errorMessageDelete.innerHTML = "Photo supprimé" 
+            createApiMessageSuccess("Photo supprimé")
             modalPhotowrapper.remove()
             for(let i = 0; i < galleryChildren.length; i++) {
                 if(id == galleryChildren[i].getAttribute('id')) {
@@ -243,11 +235,14 @@ function closeModal() {
     modal.setAttribute('aria-hidden', 'true')
     document.querySelector('.photos-wrapper').style.display = "none"
     document.querySelector('.add-photo-wrapper').style.display = "none"
+    deleteApiMessage()
     addPhotoForm.reset()
 }
 
 function switchModal() {
-    errorMessageDelete.style.display = 'none'
+    deleteApiMessage()
+    document.querySelector('.photo-preview-wrapper img').style.display = "none"
+    document.querySelector('.photo-preview-wrapper img').src = ""
     if(modalContent.getAttribute('modal-content') === 'gallery') {
         
         modal.querySelector('#back-modal').style.display = 'none'
@@ -257,8 +252,6 @@ function switchModal() {
         modalContent.querySelector('a').style.display = 'flex'
         document.querySelector('.photos-wrapper').style.display = 'flex'
         document.querySelector('.add-photo-wrapper').style.display = "none"
-        document.querySelector('.photo-preview-wrapper img').style.display = "none"
-
     }
 
     else if(modalContent.getAttribute('modal-content') === 'add-photo') {
@@ -271,11 +264,8 @@ function switchModal() {
         modalContent.querySelector('.modal-button-wrapper button').style.display = 'none'
         modalContent.querySelector('a').style.display = 'none'
         document.querySelector('.add-photo-wrapper').style.display = "flex"
-        document.querySelector('.photos-wrapper').style.display = 'none'
-        document.querySelector('.photo-preview-wrapper i').style.display = "flex"
-        document.querySelector('.photo-preview-wrapper label').style.display = "flex"
-        document.querySelector('.photo-preview-wrapper p').style.display = "flex"
-        
+        document.querySelector('.preview-add-photo-wrapper').style.display = "flex"
+        document.querySelector('.photos-wrapper').style.display = 'none'  
     }
 }
 
@@ -436,11 +426,42 @@ async function addPhoto() {
 
 // ---------------- ADD WORK ------------------ //
 
+function createApiMessageSuccess(text) {
+    const modalH3 = document.querySelector('.modal-switch-wrapper h3')
+    const message = document.createElement('p')
+    message.classList.add("success-message")
+    message.style.display = "flex"
+    message.style.position = "absolute"
+    message.style.top = "95px"
+    message.innerHTML = text
+
+    modalH3.after(message)
+}
+
+function createApiMessageError(text) {
+    const modalH3 = document.querySelector('.modal-switch-wrapper h3')
+    const message = document.createElement('p')
+    message.classList.add("error-message")
+    message.style.display = "flex"
+    message.style.position = "absolute"
+    message.style.top = "95px"
+    message.innerHTML = text
+
+    modalH3.after(message)
+}
+
+function deleteApiMessage() {
+    if(document.querySelector('.modal-switch-wrapper .error-message')) {
+        document.querySelector('.modal-switch-wrapper .error-message').remove()
+    }
+    else if(document.querySelector('.modal-switch-wrapper .success-message')) {
+        document.querySelector('.modal-switch-wrapper .success-message').remove()
+    }
+}
+
 async function sendFormPhoto(event) {
     event.preventDefault()
-    if(document.querySelector('.error-login-message')) {
-        document.querySelector('.error-login-message').remove()
-    }
+    deleteApiMessage()
         try {
             const formData = new FormData(addPhotoForm)
            
@@ -455,20 +476,18 @@ async function sendFormPhoto(event) {
             const resData = await response.json()
     
             if(response.ok) {
-                errorMessageDelete.classList.add("success-message")
-                errorMessageDelete.style.display = "flex"
-                errorMessageDelete.style.position = "absolute"
-                errorMessageDelete.style.top = "95px"
-                errorMessageDelete.innerHTML = "Photo ajouté"
+                createApiMessageSuccess("Photo ajouté")
                 createNewFigure(resData)
                 createModalPhotoWrapper(resData)
                 addPhotoForm.reset()
+                document.querySelector('.photo-preview-wrapper img').style.display = "none"
+                document.querySelector('.photo-preview-wrapper img').src = ""
+                document.querySelector('.preview-add-photo-wrapper').style.display = "flex"
             }
 
-            else if(response.status === 400) {
-                errorMessageDelete.classList.add("error-message")
-                errorMessageDelete.style.display = "flex"
-                errorMessageDelete.innerHTML = "Veuillez remplir tous les champs !"
+            else if(response.status === 400 || 500) {
+                const message = "Veuillez remplir tous les champs !"
+                createApiMessageError(message)
                 
             }
         }
