@@ -11,7 +11,9 @@ const modalContent = document.querySelector('.modal-content')
 const modalMainWrapper = document.querySelector('.modal-main-wrapper')
 const addPhotoForm = document.querySelector('.modal-switch-wrapper form')
 const gallery = document.querySelector('.gallery')
+const galleryChildren = gallery.children
 const errorMessageDelete = document.querySelector('.modal-switch-wrapper p')
+
 
 // ---------------- GALLERY ------------------ //
 
@@ -41,6 +43,7 @@ function createNewFigure(element) {
         newFigcaption.innerHTML = element.title
 
         newFigure.setAttribute("categoryId", element.categoryId)
+        newFigure.setAttribute("id", element.id)
         newFigure.appendChild(newImg)
         newFigure.appendChild(newFigcaption)
 
@@ -103,7 +106,7 @@ async function createFiltered(array) {
         filterCategoriesWrapper.appendChild(category)
 
         category.addEventListener('click', function(category) {
-            const galleryChildren = gallery.children
+            
             for(let i = 0; i < galleryChildren.length; i++) {
                 if(category.target.getAttribute('categoryId') == galleryChildren[i].getAttribute('categoryId') || category.target.getAttribute('categoryId') == 0) {
                     galleryChildren[i].style.display = "block"
@@ -130,7 +133,7 @@ async function fillPage() {
 
 // ---------------- DELETE ------------------ //
 
-async function deletePhoto(id) {
+async function deletePhoto(id, modalPhotowrapper) {
     try {
 
         const token = localStorage.getItem('token')
@@ -146,16 +149,20 @@ async function deletePhoto(id) {
             errorMessageDelete.classList.add("success-message")
             errorMessageDelete.style.display = "flex"
             errorMessageDelete.style.position = "absolute"
-            errorMessageDelete.style.top = "100px"
-            errorMessageDelete.innerHTML = "Photo supprimé"
-            console.log(response)
+            errorMessageDelete.style.top = "95px"
+            errorMessageDelete.innerHTML = "Photo supprimé" 
+            modalPhotowrapper.remove()
+            for(let i = 0; i < galleryChildren.length; i++) {
+                if(id == galleryChildren[i].getAttribute('id')) {
+                    galleryChildren[i].remove()
+                }
+            }
         }
 
         else if(response.status === 404) {
             errorMessageDelete.classList.add("error-message")
             errorMessageDelete.style.display = "flex"
             errorMessageDelete.innerHTML = "Une erreur s'est produite"
-               console.log(response)
         }
     }
 
@@ -288,8 +295,8 @@ function createModalPhotoWrapper(element) {
         trash.setAttribute("id", "trash")
 
         trash.addEventListener('click', function() {
-            deletePhoto(element.id)
-            newPhotoWrapper.remove()
+            deletePhoto(element.id,newPhotoWrapper)
+            
         })
 
         const extend = document.createElement("i")
@@ -450,7 +457,7 @@ async function sendFormPhoto(event) {
                 errorMessageDelete.classList.add("success-message")
                 errorMessageDelete.style.display = "flex"
                 errorMessageDelete.style.position = "absolute"
-                errorMessageDelete.style.top = "100px"
+                errorMessageDelete.style.top = "95px"
                 errorMessageDelete.innerHTML = "Photo ajouté"
                 createNewFigure(resData)
                 createModalPhotoWrapper(resData)
