@@ -59,7 +59,7 @@
 
 /* ---------- MODAL MAIN ---------- */
   /* ------ modal gallery ------ */
-  .modal-content form {
+.modal-content form {
     width: 100%;
     display: flex;  
     flex-direction: column;
@@ -156,13 +156,20 @@
     object-fit: cover;
 }
 
-.photo-preview-wrapper i {
+.preview-add-photo-wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.preview-add-photo-wrapper i {
     font-size: 50px;
     margin-bottom: 15px;
     color: #B9C5CC;
 }
 
-.photo-preview-wrapper label {
+.preview-add-photo-wrapper label {
     margin-bottom: 7px;
     padding: 10px 30px;
     border-radius: 50px;
@@ -171,7 +178,7 @@
     cursor: pointer;
 }
 
-.photo-preview-wrapper input[type="file"] {
+.preview-add-photo-wrapper input[type="file"] {
     display: none;
 }
 

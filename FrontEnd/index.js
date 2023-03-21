@@ -334,6 +334,9 @@ async function addPhoto() {
     const photoPreviewWrapper = document.createElement('div')
     photoPreviewWrapper.classList.add('photo-preview-wrapper')
 
+    const previewAddPhotoWrapper = document.createElement('div')
+    previewAddPhotoWrapper.classList.add('preview-add-photo-wrapper')
+
     const imgPreview = document.createElement('img')
     imgPreview.alt = 'imgPreview'
 
@@ -366,9 +369,7 @@ async function addPhoto() {
                 imgPreview.src = result;
             }
             imgPreview.style.display = "flex"
-            iconImg.style.display = "none"
-            buttonAddPhoto.style.display = "none"
-            maxImgSizeText.style.display = "none"
+            previewAddPhotoWrapper.style.display = "none"
             modalContent.querySelector('#button-add-photo').disabled = false
         }
     
@@ -379,8 +380,8 @@ async function addPhoto() {
             imgPreview.style.display = "none"
         }
     })
-
-    photoPreviewWrapper.append(imgPreview, iconImg, buttonAddPhoto, fileAddPhoto, maxImgSizeText)
+    previewAddPhotoWrapper.append(iconImg, buttonAddPhoto, fileAddPhoto, maxImgSizeText)
+    photoPreviewWrapper.append(imgPreview, previewAddPhotoWrapper)
 
     /* ------ Photo infos ------ */
 
