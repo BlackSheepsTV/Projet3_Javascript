@@ -31,8 +31,7 @@ async function getGalleryArray() {
     return res
 }
 
-function createGalleryWorks(array) { 
-    array.forEach(element => {
+function createNewFigure(element) {
         const newFigure = document.createElement("figure");
         const newImg = document.createElement("img")
         const newFigcaption = document.createElement("figcaption")
@@ -46,6 +45,11 @@ function createGalleryWorks(array) {
         newFigure.appendChild(newFigcaption)
 
         gallery.appendChild(newFigure)
+}
+
+function createGalleryWorks(array) { 
+    array.forEach(element => {
+        createNewFigure(element)
     });
 }
 
@@ -216,7 +220,7 @@ async function openModal() {
     modalContent.setAttribute('modal-content', 'gallery')
 
     if(!modal.querySelector('.photos-wrapper')) {
-        await galleryModal()
+        galleryModal(await getGalleryArray())
     }
     
     if(!modal.querySelector('.add-photo-wrapper')) {
@@ -270,14 +274,8 @@ function switchModal() {
 
 // ---------------- CREATE MODAL GALLERY ------------------ //
 
-async function galleryModal() { 
-    const photosWrapper = document.createElement('div')
-    console.log('j\'ajoute photos-wrapper')
-    photosWrapper.classList.add('photos-wrapper')
-    console.log(photosWrapper)
-
-    const array = await getGalleryArray()
-    array.forEach(element => {
+function createModalPhotoWrapper(element) {
+        const modalPhotosWrapper = document.querySelector('.photos-wrapper')
         const newPhotoWrapper = document.createElement("div")
         newPhotoWrapper.classList.add('modal-photo-wrapper')
         newPhotoWrapper.setAttribute('idPhoto', element.id)
@@ -307,10 +305,17 @@ async function galleryModal() {
 
         iconsPhotoWrapper.append(trash, extend)
         newPhotoWrapper.append(iconsPhotoWrapper, photo, editText)
-        photosWrapper.appendChild(newPhotoWrapper)
-    });
+        modalPhotosWrapper.append(newPhotoWrapper)
+}
 
+function galleryModal(array) { 
+    const photosWrapper = document.createElement('div')
+    photosWrapper.classList.add('photos-wrapper')
     modalMainWrapper.appendChild(photosWrapper)
+
+    array.forEach(element => {
+        createModalPhotoWrapper(element) 
+    });
 }
 
 async function addPhoto() {
@@ -447,20 +452,20 @@ async function sendFormPhoto(event) {
                 errorMessageDelete.style.position = "absolute"
                 errorMessageDelete.style.top = "100px"
                 errorMessageDelete.innerHTML = "Photo ajouté"
-               console.log(resData)
+                createNewFigure(resData)
+                createModalPhotoWrapper(resData)
             }
 
             else if(response.status === 400) {
                 errorMessageDelete.classList.add("error-message")
                 errorMessageDelete.style.display = "flex"
                 errorMessageDelete.innerHTML = "Veuillez remplir tous les champs !"
-                console.log(response)
+                
             }
         }
 
         catch(e) {
             console.log(e.message)
-            
         }
 }
 
