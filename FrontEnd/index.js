@@ -48,8 +48,9 @@ function createNewFigure(element) {
         gallery.appendChild(newFigure)
 }
 
-function createGalleryWorks(array) { 
-    array.forEach(element => {
+async function createGalleryWorks() {
+    const test = await getGalleryArray() 
+    test.forEach(element => {
         createNewFigure(element)
     });
 }
@@ -118,17 +119,6 @@ async function createFiltered(array) {
     })              
 }
 
-async function fillPage() {
-    try {
-        createGalleryWorks(await getGalleryArray())
-        createFiltered(await getCategoriesArray())  
-    }
-    
-    catch(e) {
-        console.log('Fetch error : ' + e.message);
-    }
-}
-
 // ---------------- DELETE ------------------ //
 
 async function deletePhoto(id, modalPhotowrapper) {
@@ -186,6 +176,7 @@ async function checkIfLogged() {
         }
     
         else {
+            createFiltered(await getCategoriesArray())
             loginLink.innerHTML = "Login"
             loginLink.href = "./login.html"
     
@@ -543,6 +534,6 @@ function startListeners() {
 }
 
 // ---------------- Execute fonction ------------------ //
-fillPage()
+createGalleryWorks()
 checkIfLogged()
 startListeners()
