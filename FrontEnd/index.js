@@ -166,6 +166,9 @@ async function deletePhoto(id, modalPhotowrapper) {
 async function checkIfLogged() {
     try {
         if(getToken !== null) {
+
+             const filterWrapper = document.querySelector('.filter-categories-wrapper')
+           console.log(filterWrapper)
             loginLink.innerHTML = "Logout"
             loginLink.href = "./index.html"
             loginButton.appendChild(loginLink)
@@ -338,8 +341,8 @@ async function addPhoto() {
     fileAddPhoto.type = 'file'
     fileAddPhoto.name = 'image'
     fileAddPhoto.id = 'image'
-    fileAddPhoto.accept = "image/png, image/jpg"
-    fileAddPhoto.size = "400"
+    fileAddPhoto.accept = 'image/png,image/jpeg';
+    fileAddPhoto.setAttribute('maxlength', 4 * 1024 * 1024);
 
     const maxImgSizeText = document.createElement('p')
     maxImgSizeText.innerHTML = 'jpg, png : 4mo max'
@@ -349,7 +352,14 @@ async function addPhoto() {
 
     fileAddPhoto.addEventListener("change", function() {
         const file = this.files[0];
-        if (file) {
+        const fileSize = file.size;
+        const fileType = file.type;
+  
+        const allowedTypes = ['image/jpeg', 'image/png'];
+        const maxFileSize = 4 * 1024 * 1024;
+
+        if (file && allowedTypes.includes(fileType) && fileSize < maxFileSize) {
+            deleteApiMessage()
             const reader = new FileReader();
             reader.readAsDataURL(file);
             reader.onload = function() {
@@ -362,6 +372,15 @@ async function addPhoto() {
         }
     
         else {
+            deleteApiMessage()
+            if (!allowedTypes.includes(fileType)) {
+                this.value = '';
+                createApiMessageError('File not allowed')
+                    
+            } else if (fileSize > maxFileSize) {
+                this.value = '';
+                createApiMessageError('File is too large')
+            }
             iconImg.style.display = "flex"
             buttonAddPhoto.style.display = "flex"
             maxImgSizeText.style.display = "flex"
@@ -474,7 +493,7 @@ async function sendFormPhoto(event) {
             const resData = await response.json()
     
             if(response.ok) {
-                createApiMessageSuccess("Photo ajouté")
+                createApiMessageSuccess("Photo ajoutée")
                 createNewFigure(resData)
                 createModalPhotoWrapper(resData)
                 addPhotoForm.reset()
@@ -486,7 +505,6 @@ async function sendFormPhoto(event) {
             else if(response.status === 400 || 500) {
                 const message = "Veuillez remplir tous les champs !"
                 createApiMessageError(message)
-                
             }
         }
 
@@ -525,7 +543,6 @@ function startListeners() {
 }
 
 // ---------------- Execute fonction ------------------ //
-
-checkIfLogged()
 fillPage()
+checkIfLogged()
 startListeners()
